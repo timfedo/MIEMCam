@@ -1,8 +1,10 @@
-package com.miem.timfedo.miemcam
+package com.miem.timfedo.miemcam.View
 
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import com.miem.timfedo.miemcam.Model.DataServices.BasicRequests.BasicGetRequest
+import com.miem.timfedo.miemcam.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
