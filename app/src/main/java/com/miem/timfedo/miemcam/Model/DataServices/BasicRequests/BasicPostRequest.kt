@@ -12,6 +12,7 @@ import java.io.IOException
 class BasicPostRequest(private val url: String,
                        private val header: String,
                        private val body: String,
+                       private val completion: () -> Unit,
                        private val errorHandler: () -> Unit) {
 
     private val client = OkHttpClient()
@@ -26,6 +27,8 @@ class BasicPostRequest(private val url: String,
         client.newCall(request).enqueue(object: Callback {
             override fun onResponse(call: Call, response: Response) {
                 when (response.code) {
+                    in 200..299 ->
+                        completion()
                     401 ->
                         unauthorized()
                     in 500..599 ->
