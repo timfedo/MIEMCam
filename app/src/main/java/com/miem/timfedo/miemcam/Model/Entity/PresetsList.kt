@@ -16,12 +16,12 @@ class PresetsList {
         }
     }
 
-    fun addPreset(preset: Preset, at: Int) {
-        presets[at] = preset
+    fun addPreset(preset: Preset, id: Int) {
+        presets[id] = preset
     }
 
-    fun removePreset(at: Int) {
-        presets[at] = null
+    fun removePreset(id: Int) {
+        presets[id] = null
     }
 
     fun makeJson(): String {

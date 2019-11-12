@@ -9,6 +9,16 @@ import kotlinx.serialization.json.JSON
 
 class CamerasList {
 
+    companion object {
+        fun makeJson(camerasList: CamerasList): String {
+            return JSON.stringify(HashMapSerializer(StringSerializer, ArrayListSerializer(Camera.serializer())), camerasList.cameras)
+        }
+
+        fun parseJson(json: String): HashMap<String, ArrayList<Camera>> {
+            return JSON.parse(HashMapSerializer(StringSerializer, ArrayListSerializer(Camera.serializer())), json) as HashMap<String, ArrayList<Camera>>
+        }
+    }
+
     var cameras = HashMap<String, ArrayList<Camera>>()
         private set
 
@@ -26,14 +36,6 @@ class CamerasList {
         for ((_, camerasInRoom) in cameras) {
             camerasInRoom.removeAll { it.uid == uid }
         }
-    }
-
-    fun makeJson(): String {
-        return JSON.stringify(HashMapSerializer(StringSerializer, ArrayListSerializer(Camera.serializer())), cameras)
-    }
-
-    fun parseJson(json: String): HashMap<String, ArrayList<Camera>> {
-        return JSON.parse(HashMapSerializer(StringSerializer, ArrayListSerializer(Camera.serializer())), json) as HashMap<String, ArrayList<Camera>>
     }
 
     fun replaceAll(with: HashMap<String, ArrayList<Camera>>) {
