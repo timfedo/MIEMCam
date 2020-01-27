@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/options"
+        android:title="@string/options"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/about"
+        android:title="@string/about"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/logout"
+        android:title="@string/logout"
+        app:showAsAction="never">
+    </item>
+    <item
+        android:id="@+id/setBaseUrl"
+        android:title="DEBUG set baseUrl"
+        app:showAsAction="never">
+    </item>
+    <item
+            android:id="@+id/downloadNewApp"
+            android:title="DEBUG обновить"
+            app:showAsAction="never">
+    </item>
+    <item
+            android:id="@+id/updateLog"
+            android:title="DEBUG инфа об обнове"
+            app:showAsAction="never">
+    </item>
+</menu>

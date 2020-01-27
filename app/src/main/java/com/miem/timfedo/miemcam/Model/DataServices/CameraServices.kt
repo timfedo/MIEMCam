@@ -1,38 +1,31 @@
 package com.miem.timfedo.miemcam.Model.DataServices
 
+import android.util.Log
 import com.miem.timfedo.miemcam.Model.DataServices.BasicRequests.BasicGetRequest
 import com.miem.timfedo.miemcam.Model.DataServices.BasicRequests.BasicPostRequest
 import com.miem.timfedo.miemcam.Model.Entity.CamerasList
 import com.miem.timfedo.miemcam.Model.Entity.Objects.Camera
 import com.miem.timfedo.miemcam.Model.Session
 import kotlinx.serialization.json.JSON
+import okhttp3.OkHttpClient
 import org.json.JSONObject
 
-class CameraServices(private var session: Session) {
+class CameraServices(private val client: OkHttpClient, private val session: Session) {
 
-    fun discovery(handler: (HashMap<String, ArrayList<Camera>>) -> Unit) {
-        val request = BasicGetRequest(Session.basicAdress + "/Discovery", session.token, { response ->
+    fun discovery(handler: (ArrayList<Camera>) -> Unit) {
+        val request = BasicGetRequest(client, Session.basicAdress + "/return_cams", session.token, { response ->
+            Log.e("res", response)
             handler(CamerasList.parseJson(response))
         }, {})
         request.start()
     }
 
-    fun addCamera(ip: String, port: String, logpass: String, camera: Camera, completion: () -> Unit) {
+    fun choseCam(uid: String, completion: () -> Unit) {
         val json = JSONObject()
-        json.put("ip", ip)
-        json.put("port", port)
-        json.put("logpass", logpass)
-        val body = json.toString() + JSON.stringify(Camera.serializer(), camera)
-        val request = BasicPostRequest(Session.basicAdress + "/Add_Camera", session.token, body, {
+        json.put("uid", uid)
+        val request = BasicPostRequest(client, Session.basicAdress + "/chose_cam", session.token, json.toString(), {
             completion()
         }, {})
         request.start()
-    }
-
-    fun deleteCamera(camera: Camera, completion: () -> Unit) {
-        val request = BasicPostRequest(Session.basicAdress + "/Delete_Cam", session.token,
-            JSON.stringify(Camera.serializer(), camera), {
-                completion()
-            }, {})
     }
 }
