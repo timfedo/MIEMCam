@@ -1,9 +1,7 @@
 package com.miem.timfedo.miemcam.Presenter
 
-import android.util.Log
 import androidx.fragment.app.Fragment
 import com.miem.timfedo.miemcam.Model.DataServices.CameraServices
-import com.miem.timfedo.miemcam.Model.Entity.Objects.Camera
 import com.miem.timfedo.miemcam.Model.Session
 import com.miem.timfedo.miemcam.View.CamerasListFragment
 import com.miem.timfedo.miemcam.View.ControlPanelFragment
@@ -16,11 +14,12 @@ enum class FragentType {
 }
 
 interface MainController {
+    fun setUpViews()
     fun setFragment(f: Fragment)
     fun setBackgroundFragment(f: Fragment)
     fun openCameraPicker()
     fun closeCameraPicker()
-    fun setToolbarLabel(text: String)
+    fun setActionBarLabel(text: String)
 }
 
 class MainPresenter(private var viewController: MainController) {
@@ -36,7 +35,7 @@ class MainPresenter(private var viewController: MainController) {
     init {
         client.dispatcher.maxRequests = 1
         controlPanelFragment = ControlPanelFragment(client, session)
-        camerasListFragment = CamerasListFragment(client, session, viewController::setToolbarLabel)
+        camerasListFragment = CamerasListFragment(client, session, this::onCameraPicked)
         recordFragment = RecordFragment(client, session)
         cameraServices = CameraServices(client, session)
     }
@@ -53,16 +52,23 @@ class MainPresenter(private var viewController: MainController) {
     }
 
     fun viewCreated() {
+        viewController.setUpViews()
         viewController.setFragment(controlPanelFragment)
         viewController.setBackgroundFragment(camerasListFragment)
     }
 
-    fun toolbarClicked() {
+    fun changeCamerasListVisibility() {
         if (!isCameraPickerOpened) {
             viewController.openCameraPicker()
         } else {
             viewController.closeCameraPicker()
         }
         isCameraPickerOpened = !isCameraPickerOpened
+    }
+
+    private fun onCameraPicked(text: String) {
+        changeCamerasListVisibility()
+        viewController.setActionBarLabel(text)
+        controlPanelFragment.resetView()
     }
 }

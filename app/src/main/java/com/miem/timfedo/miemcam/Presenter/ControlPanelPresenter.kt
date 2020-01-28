@@ -30,6 +30,10 @@ class ControlPanelPresenter(private val controlPanelController: ControlPanelCont
         presetServices.execPreset(id) {}
     }
 
+    fun presetBtnLongClicked(id: Int) {
+        presetServices.setPreset(id) {}
+    }
+
     fun zoomBtnClicked(isIncreasing: Boolean) {
         val zoom = if (isIncreasing) {
             0.5f
@@ -65,8 +69,10 @@ class ControlPanelPresenter(private val controlPanelController: ControlPanelCont
     }
 
     fun setFocusMode(mode: FocusMode) {
-        actionServices.setFocusMode(mode) { currentFocusMode = mode }
-        updateFocusModeBtns()
+        actionServices.setFocusMode(mode) {
+            currentFocusMode = mode
+            updateFocusModeBtns()
+        }
     }
 
     fun updateFocusModeBtns() {

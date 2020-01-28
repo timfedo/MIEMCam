@@ -40,29 +40,41 @@ class ControlPanelFragment(client: OkHttpClient,
         super.onViewCreated(view, savedInstanceState)
         touchPad.addView(TouchPadView(context))
         setUpActions()
-        controlPanelPresenter.updateFocusModeBtns()
+        resetView()
+        //controlPanelPresenter.updateFocusModeBtns()
     }
 
     override fun changeIsEnabledFocusAutoBtn(isEnabled: Boolean) {
         auto.isEnabled = !isEnabled
-        if (isEnabled) {
-            auto.setTextColor(Color.BLACK)
-            auto.strokeColor = ColorStateList.valueOf(Color.BLACK)
-        } else {
-            auto.setTextColor(Color.GRAY)
-            auto.strokeColor = ColorStateList.valueOf(Color.GRAY)
+        activity?.runOnUiThread {
+            if (isEnabled) {
+                auto.setTextColor(Color.BLACK)
+                auto.strokeColor = ColorStateList.valueOf(Color.BLACK)
+            } else {
+                auto.setTextColor(Color.GRAY)
+                auto.strokeColor = ColorStateList.valueOf(Color.GRAY)
+            }
         }
     }
 
     override fun changeIsEnabledFocusManualBtn(isEnabled: Boolean) {
         manual.isEnabled = !isEnabled
-        if (isEnabled) {
-            manual.setTextColor(Color.BLACK)
-            manual.strokeColor = ColorStateList.valueOf(Color.BLACK)
-        } else {
-            manual.setTextColor(Color.GRAY)
-            manual.strokeColor = ColorStateList.valueOf(Color.GRAY)
+        activity?.runOnUiThread {
+            if (isEnabled) {
+                manual.setTextColor(Color.BLACK)
+                manual.strokeColor = ColorStateList.valueOf(Color.BLACK)
+            } else {
+                manual.setTextColor(Color.GRAY)
+                manual.strokeColor = ColorStateList.valueOf(Color.GRAY)
+            }
         }
+    }
+
+    fun resetView() {
+        auto.setTextColor(Color.GRAY)
+        auto.strokeColor = ColorStateList.valueOf(Color.GRAY)
+        manual.setTextColor(Color.GRAY)
+        manual.strokeColor = ColorStateList.valueOf(Color.GRAY)
     }
 
     private fun setUpActions() {
@@ -102,6 +114,42 @@ class ControlPanelFragment(client: OkHttpClient,
         }
         preset9.setOnClickListener {
             controlPanelPresenter.presetBtnClicked(9)
+        }
+        preset1.setOnLongClickListener {
+            controlPanelPresenter.presetBtnLongClicked(1)
+            true
+        }
+        preset2.setOnLongClickListener {
+            controlPanelPresenter.presetBtnLongClicked(2)
+            true
+        }
+        preset3.setOnLongClickListener {
+            controlPanelPresenter.presetBtnLongClicked(3)
+            true
+        }
+        preset4.setOnLongClickListener {
+            controlPanelPresenter.presetBtnLongClicked(4)
+            true
+        }
+        preset5.setOnLongClickListener {
+            controlPanelPresenter.presetBtnLongClicked(5)
+            true
+        }
+        preset6.setOnLongClickListener {
+            controlPanelPresenter.presetBtnLongClicked(6)
+            true
+        }
+        preset7.setOnLongClickListener {
+            controlPanelPresenter.presetBtnLongClicked(7)
+            true
+        }
+        preset8.setOnLongClickListener {
+            controlPanelPresenter.presetBtnLongClicked(8)
+            true
+        }
+        preset9.setOnLongClickListener {
+            controlPanelPresenter.presetBtnLongClicked(9)
+            true
         }
     }
 

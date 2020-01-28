@@ -37,7 +37,7 @@ class BasicGetRequest(private val client: OkHttpClient,
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("get", "fail")
+                Log.e("get", "fail $e")
                 errorHandler()
             }
         })

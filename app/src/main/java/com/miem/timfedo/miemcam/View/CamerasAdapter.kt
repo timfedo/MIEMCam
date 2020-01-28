@@ -18,7 +18,9 @@ class CamerasAdapter(var camerasList: CamerasList,
     override fun getItemCount() = camerasList.cameras.size
 
     override fun onBindViewHolder(holder: CameraHolder, position: Int) {
-        holder.bind(camerasList.cameras[position])
+        val shouldShowRoom =
+            (position == 0) || (camerasList.cameras[position].room != camerasList.cameras[position - 1].room)
+        holder.bind(camerasList.cameras[position], shouldShowRoom)
     }
 
     inner class CameraHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -26,8 +28,8 @@ class CamerasAdapter(var camerasList: CamerasList,
         private val room = itemView.findViewById<TextView>(R.id.room)
         private val name = itemView.findViewById<TextView>(R.id.name)
 
-        fun bind(item: Camera) {
-            room.text = item.room
+        fun bind(item: Camera, shouldShowRoom: Boolean) {
+            room.text = if (shouldShowRoom) item.room else ""
             name.text = item.name
             itemView.setOnClickListener {
                 onItemClicked(item)

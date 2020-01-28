@@ -58,8 +58,9 @@ class ActionServices(private val client: OkHttpClient, private val session: Sess
     }
 
     fun setFocusContinious(value: Float, completion: () -> Unit) {
-        val request = BasicPostRequest(client, Session.basicAdress + "/move_focus_continious", session.token,
-            JSON.stringify(FloatSerializer, value), {
+        val json = JSONObject()
+        json.put("m_foc", value)
+        val request = BasicPostRequest(client, Session.basicAdress + "/move_focus_continuous", session.token, json.toString(), {
                 completion()
             }, {})
         request.start()
@@ -86,8 +87,8 @@ class ActionServices(private val client: OkHttpClient, private val session: Sess
 
     fun setFocusMode(mode: FocusMode, completion: () -> Unit) {
         val modeS = when (mode) {
-            FocusMode.AUTO -> "AUTO"
-            FocusMode.MANUAL -> "MANUAL"
+            FocusMode.AUTO -> "\"AUTO\""
+            FocusMode.MANUAL -> "\"MANUAL\""
         }
         Log.e("q", modeS)
         val request = BasicPostRequest(client, Session.basicAdress + "/set_focus_mode", session.token, modeS, {

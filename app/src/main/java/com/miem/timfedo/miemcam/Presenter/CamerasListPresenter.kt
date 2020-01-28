@@ -35,6 +35,7 @@ class CamerasListPresenter(private val camerasListController: CamerasListControl
     }
 
     private fun onCamerasReceived(cameras: ArrayList<Camera>) {
+        cameras.sortBy { it.room }
         this.camerasList.replaceAll(cameras)
         camerasListController.updateCamerasListView()
     }

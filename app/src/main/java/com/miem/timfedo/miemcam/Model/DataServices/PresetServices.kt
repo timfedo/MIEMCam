@@ -21,6 +21,16 @@ class PresetServices(private val client: OkHttpClient, private val session: Sess
         request.start()
     }
 
+    fun setPreset(id: Int, completion: () -> Unit) {
+        val json = JSONObject()
+        json.put("s_pres", id)
+        val request = BasicPostRequest(
+            client, Session.basicAdress + "/set_preset", session.token, json.toString(), {
+                completion()
+            }, {})
+        request.start()
+    }
+
     fun execPreset(id: Int, completion: () -> Unit) {
         val json = JSONObject()
         json.put("go_pres", id)
