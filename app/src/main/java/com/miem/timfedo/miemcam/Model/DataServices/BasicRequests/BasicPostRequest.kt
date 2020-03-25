@@ -1,6 +1,7 @@
 package com.miem.timfedo.miemcam.Model.DataServices.BasicRequests
 
 import android.util.Log
+import com.miem.timfedo.miemcam.Model.Authorizer
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -18,7 +19,6 @@ class BasicPostRequest(private val client: OkHttpClient,
                        private val errorHandler: () -> Unit) {
 
     fun start() {
-
         val request = Request.Builder()
             .addHeader("key", header)
             .url(url)
@@ -49,6 +49,6 @@ class BasicPostRequest(private val client: OkHttpClient,
     }
 
     private fun unauthorized() {
-        //TODO: in next version with authorization
+        Authorizer.shared.showAuth()
     }
 }

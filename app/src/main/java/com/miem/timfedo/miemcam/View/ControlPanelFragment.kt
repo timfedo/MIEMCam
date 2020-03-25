@@ -4,10 +4,6 @@ package com.miem.timfedo.miemcam.View
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
 import com.miem.timfedo.miemcam.Model.Session
 import com.miem.timfedo.miemcam.Presenter.ControlPanelController
 import com.miem.timfedo.miemcam.Presenter.ControlPanelPresenter
@@ -23,25 +19,54 @@ import android.widget.SeekBar
 import com.miem.timfedo.miemcam.Model.DataServices.FocusMode
 import com.miem.timfedo.miemcam.Model.DataServices.SettingType
 import com.miem.timfedo.miemcam.View.SectionView.OnScrollStoppedListener
+import org.videolan.libvlc.IVLCVout
+import org.videolan.libvlc.IVLCVout.Callback
+import org.videolan.libvlc.LibVLC
+import org.videolan.libvlc.MediaPlayer
+import java.net.URI
+import android.net.Uri
+import android.view.*
+import kotlinx.android.synthetic.main.activity_main.*
+import org.videolan.libvlc.Media
+
 
 class ControlPanelFragment(client: OkHttpClient,
-                           session: Session) : Fragment(), ControlPanelController {
+                           private val session: Session) : Fragment(), ControlPanelController, Callback {
 
     private val controlPanelPresenter = ControlPanelPresenter(this, client, session)
+    private lateinit var libVLC: LibVLC
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var vout: IVLCVout
+    private lateinit var mediaSurface: SurfaceView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        libVLC = LibVLC(context, arrayListOf("-vvv"))
+        mediaPlayer = MediaPlayer(libVLC)
+        vout = mediaPlayer.vlcVout
+        mediaSurface = SurfaceView(context)
         return inflater.inflate(R.layout.fragment_control_panel, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        touchPad.addView(mediaSurface)
         touchPad.addView(TouchPadView(context))
+
         setUpActions()
+        controlPanelPresenter.setUpStream()
         resetView()
         //controlPanelPresenter.updateFocusModeBtns()
+    }
+
+    override fun onSurfacesCreated(vlcVout: IVLCVout?) {
+        vlcVout?.setWindowSize(mediaSurface.width, mediaSurface.height)
+    }
+
+    override fun onSurfacesDestroyed(vlcVout: IVLCVout?) {
+
     }
 
     override fun changeIsEnabledFocusAutoBtn(isEnabled: Boolean) {
@@ -70,11 +95,47 @@ class ControlPanelFragment(client: OkHttpClient,
         }
     }
 
+    override fun setUpVout() {
+        vout.addCallback(this)
+        with (vout) {
+            setVideoView(mediaSurface)
+            attachViews()
+        }
+    }
+
+    override fun startStream(uri: Uri) {
+        val media = Media(libVLC, uri)
+        with(media) {
+            setHWDecoderEnabled(true, false)
+            addOption(":clock-jitter=0")
+            addOption(":network-caching=500")
+            addOption(":clock-synchro=0")
+            addOption(":fullscreen")
+        }
+        with (mediaPlayer) {
+            this.media = media
+            aspectRatio = "16:9"
+            scale = 1f
+            position = MediaPlayer.Position.Center.toFloat()
+            setEventListener { event ->
+//                if (event.type == MediaPlayer.Event.Playing) {
+//                    loadingProgressStream.visibility = View.INVISIBLE
+//                    mediaSurface.setBackgroundColor(Color.TRANSPARENT)
+//                } else {
+//                    loadingProgressStream.visibility = View.VISIBLE
+//                    mediaSurface.setBackgroundColor(Color.WHITE)
+//                }
+            }
+            play()
+        }
+    }
+
     fun resetView() {
         auto.setTextColor(Color.GRAY)
         auto.strokeColor = ColorStateList.valueOf(Color.GRAY)
         manual.setTextColor(Color.GRAY)
         manual.strokeColor = ColorStateList.valueOf(Color.GRAY)
+        controlPanelPresenter.setStreamUri(Uri.parse("rtsp://92.53.78.98:${session.port}/${session.pickedCamera}"))
     }
 
     private fun setUpActions() {

@@ -12,4 +12,11 @@
             android:layout_height="match_parent"
             android:scrollbars="none"
             tools:listitem="@layout/camera"/>
+
+    <ProgressBar
+            android:id="@+id/loadingProgressList"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/colorPrimary"/>
 </FrameLayout>

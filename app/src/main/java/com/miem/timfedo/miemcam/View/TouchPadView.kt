@@ -3,6 +3,8 @@ package com.miem.timfedo.miemcam.View
 import android.content.Context
 import android.graphics.*
 import android.view.View
+import androidx.core.graphics.BlendModeCompat
+import androidx.core.graphics.setBlendMode
 
 class TouchPadView(context: Context?) : View(context) {
 
@@ -16,6 +18,7 @@ class TouchPadView(context: Context?) : View(context) {
         paint.strokeCap = Paint.Cap.ROUND
         val rect = RectF(0f, 0f, width.toFloat(), height.toFloat())
         canvas?.drawRoundRect(rect, 5f, 5f, paint)
+        paint.color = Color.WHITE
         canvas?.drawLine(
             width.toFloat()/2 - 20,
             height.toFloat()/2,

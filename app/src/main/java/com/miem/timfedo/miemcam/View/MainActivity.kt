@@ -20,11 +20,16 @@ import android.content.Intent
 import android.net.Uri
 import kotlin.random.Random
 import android.animation.Animator
+import android.app.Activity
+import com.miem.timfedo.miemcam.Model.Authorizer
+import java.net.Authenticator
 
+const val TOKEN_REQUEST = 1
 
 class MainActivity : AppCompatActivity(), MainController {
 
-    private val mainPresenter = MainPresenter(this)
+    private lateinit var session: Session
+    private lateinit var mainPresenter: MainPresenter
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
@@ -42,11 +47,28 @@ class MainActivity : AppCompatActivity(), MainController {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        session = Session(this)
+        mainPresenter = MainPresenter(this, session)
         setContentView(R.layout.activity_main)
+
+        Authorizer.shared.showAuth = {
+            //session.token = ""
+            val intent = Intent(this, AuthorizationView::class.java)
+            startActivityForResult(intent, TOKEN_REQUEST)
+        }
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         mainPresenter.viewCreated()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == TOKEN_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                //session.token = data?.getStringExtra("token") ?: ""
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -56,6 +78,10 @@ class MainActivity : AppCompatActivity(), MainController {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         return when(item?.itemId) {
+            R.id.logout -> {
+                Authorizer.shared.showAuth()
+                return true
+            }
             R.id.setBaseUrl -> {
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle("Title")
@@ -83,7 +109,7 @@ class MainActivity : AppCompatActivity(), MainController {
             R.id.updateLog -> {
                 val builder = AlertDialog.Builder(this@MainActivity)
                 builder.setTitle("Информация о последнем обновлении")
-                    .setMessage("1) Камеры теперь подхватываются из gsuit\n")
+                    .setMessage("1) Камеры теперь подхватываются из gsuit\n2) Улучшения пользовательского интерфейса")
                     .setCancelable(false)
                     .setNegativeButton(if (Random.nextBoolean()) "Узнал" else "Согласен") { dialog, _ -> dialog.cancel() }
                 val alert = builder.create()

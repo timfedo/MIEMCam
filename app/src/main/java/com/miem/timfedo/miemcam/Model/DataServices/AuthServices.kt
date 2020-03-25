@@ -11,21 +11,14 @@ import kotlinx.serialization.json.JSON
 import okhttp3.OkHttpClient
 import org.json.JSONObject
 
-class CameraServices(private val client: OkHttpClient, private val session: Session) {
+class AuthServices(private val client: OkHttpClient) {
 
-    fun discovery(handler: (ArrayList<Camera>) -> Unit) {
-        val request = BasicGetRequest(client, Session.basicAdress + "/return_cams", session.token, { response ->
-            Log.e("res", response)
-            handler(CamerasList.parseJson(response))
-        }, {})
-        request.start()
-    }
-
-    fun choseCam(uid: String, completion: (String) -> Unit) {
+    fun login(email: String, password: String, completion: (String) -> Unit) {
         val json = JSONObject()
-        json.put("uid", uid)
-        val request = BasicPostRequestWithResult(client, Session.basicAdress + "/chose_cam", session.token, json.toString(), { result ->
-            completion(result)
+        json.put("email", email)
+        json.put("password", password)
+        val request = BasicPostRequestWithResult(client, Session.basicAdressNvr + "/login", "", json.toString(), { result ->
+            completion(JSONObject(result).getString("token"))
         }, {})
         request.start()
     }

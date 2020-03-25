@@ -1,5 +1,6 @@
 package com.miem.timfedo.miemcam.Presenter
 
+import android.net.Uri
 import com.miem.timfedo.miemcam.Model.DataServices.*
 import com.miem.timfedo.miemcam.Model.Session
 import okhttp3.OkHttpClient
@@ -8,6 +9,8 @@ import java.lang.Math.abs
 interface ControlPanelController {
     fun changeIsEnabledFocusAutoBtn(isEnabled: Boolean)
     fun changeIsEnabledFocusManualBtn(isEnabled: Boolean)
+    fun setUpVout()
+    fun startStream(uri: Uri)
 }
 
 class ControlPanelPresenter(private val controlPanelController: ControlPanelController,
@@ -19,6 +22,7 @@ class ControlPanelPresenter(private val controlPanelController: ControlPanelCont
     private var prevX = 2f
     private var prevY = 2f
     private var currentFocusMode = FocusMode.AUTO
+    private var streamUri = Uri.EMPTY
 
     fun stopped() {
         actionServices.stop {}
@@ -86,5 +90,20 @@ class ControlPanelPresenter(private val controlPanelController: ControlPanelCont
                 controlPanelController.changeIsEnabledFocusManualBtn(true)
             }
         }
+    }
+
+    fun setUpStream() {
+        controlPanelController.setUpVout()
+    }
+
+//    fun surfacesCreated() {
+//        // TODO: remove! Only mock
+//        setStreamUri()
+//        Uri.parse("rtsp://92.53.78.98:${session.port}/${session.pickedCamera}}")
+//    }
+
+    fun setStreamUri(uri: Uri) {
+        this.streamUri = uri
+        controlPanelController.startStream(uri)
     }
 }

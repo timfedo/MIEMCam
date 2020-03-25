@@ -51,4 +51,8 @@ class CamerasListFragment(client: OkHttpClient,
             camerasListView.adapter?.notifyDataSetChanged()
         }
     }
+
+    override fun stopLoadAnimation() {
+        loadingProgressList.visibility = View.INVISIBLE
+    }
 }

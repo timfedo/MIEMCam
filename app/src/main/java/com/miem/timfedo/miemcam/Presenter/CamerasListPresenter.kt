@@ -12,6 +12,7 @@ interface CamerasListController {
     fun setToolbarLabel(text: String)
     fun setUpCamerasListView(camerasAdapter: CamerasAdapter)
     fun updateCamerasListView()
+    fun stopLoadAnimation()
 }
 
 class CamerasListPresenter(private val camerasListController: CamerasListController,
@@ -28,15 +29,18 @@ class CamerasListPresenter(private val camerasListController: CamerasListControl
     }
 
     private fun onCameraPicked(camera: Camera) {
-        cameraServices.choseCam(camera.uid) {
-            this.camerasListController.setToolbarLabel(camera.name)
+        cameraServices.choseCam(camera.uid) { result ->
             session.pickedRoom = camera.room
+            session.pickedCamera = camera.uid
+            session.port = result
+            this.camerasListController.setToolbarLabel(camera.name)
         }
     }
 
     private fun onCamerasReceived(cameras: ArrayList<Camera>) {
         cameras.sortBy { it.room }
         this.camerasList.replaceAll(cameras)
+        camerasListController.stopLoadAnimation()
         camerasListController.updateCamerasListView()
     }
 }

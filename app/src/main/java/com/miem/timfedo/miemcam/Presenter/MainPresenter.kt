@@ -1,6 +1,7 @@
 package com.miem.timfedo.miemcam.Presenter
 
 import androidx.fragment.app.Fragment
+import com.miem.timfedo.miemcam.Model.Authorizer
 import com.miem.timfedo.miemcam.Model.DataServices.CameraServices
 import com.miem.timfedo.miemcam.Model.Session
 import com.miem.timfedo.miemcam.View.CamerasListFragment
@@ -22,9 +23,8 @@ interface MainController {
     fun setActionBarLabel(text: String)
 }
 
-class MainPresenter(private var viewController: MainController) {
+class MainPresenter(private var viewController: MainController, private val session: Session) {
 
-    private val session = Session("9445980805164d5aa0efc6c91500d298")
     private val client = OkHttpClient()
     private val controlPanelFragment: ControlPanelFragment
     private val camerasListFragment: CamerasListFragment
@@ -52,6 +52,9 @@ class MainPresenter(private var viewController: MainController) {
     }
 
     fun viewCreated() {
+        if (session.token == "") {
+            Authorizer.shared.showAuth()
+        }
         viewController.setUpViews()
         viewController.setFragment(controlPanelFragment)
         viewController.setBackgroundFragment(camerasListFragment)
