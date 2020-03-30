@@ -5,40 +5,36 @@ import com.miem.timfedo.miemcam.Model.DataServices.BasicRequests.BasicGetRequest
 import com.miem.timfedo.miemcam.Model.DataServices.BasicRequests.BasicPostRequest
 import com.miem.timfedo.miemcam.Model.Entity.Objects.Preset
 import com.miem.timfedo.miemcam.Model.Session
-import com.miem.timfedo.miemcam.Presenter.SoundSource
 import kotlinx.serialization.json.JSON
+import kotlinx.serialization.json.jsonArray
 import okhttp3.OkHttpClient
+import org.json.JSONArray
 import org.json.JSONObject
 
 class RecordServices(private val client: OkHttpClient, private val session: Session) {
 
-    fun startRecord(id: String, completion: () -> Unit) {
-        val request = BasicPostRequest(client, Session.basicAdressNvr + "/start-record/$id", session.token, null, {
-            completion()
+    fun getRooms(completion: (ArrayList<String>) -> Unit) {
+        val request = BasicGetRequest(client, Session.basicAdressNvr + "/rooms", session.token, { result ->
+            val resultArray = arrayListOf<String>()
+            val jsonArray = JSONArray(result)
+            for (i in 0 until jsonArray.length()) {
+                val item = jsonArray.getJSONObject(i)
+                resultArray.add(item.getString("name"))
+            }
+            completion(resultArray)
         }, {})
         request.start()
     }
 
-    fun stopRecord(id: String, completion: () -> Unit) {
-        val request = BasicPostRequest(client, Session.basicAdressNvr + "/stop-record/$id", session.token, null, {
-            completion()
-        }, {})
-        request.start()
-    }
-
-    fun setSoundSource(id: String, sound: SoundSource, completion: () -> Unit) {
-        val soundType = when (sound) {
-            SoundSource.CODER -> "enc"
-            SoundSource.CAMERA -> "cam"
-        }
+    fun requestRecord(room: String, email: String, name: String, date: String, start: String, stop: String, completion: () -> Unit) {
         val json = JSONObject()
-        json.put("id", id)
-        json.put("sound", soundType)
+        json.put("start_time", start)
+        json.put("end_time", stop)
+        json.put("date", date)
+        json.put("event_name", name)
+        json.put("user_email", email)
         val body = json.toString()
-        Log.e("q", body)
-        val request = BasicPostRequest(client, Session.basicAdressNvr + "/sound-change", session.token, body, {
-            completion()
-        }, {})
+        val request = BasicPostRequest(client, Session.basicAdressNvr + "/montage-event/$room", session.token, body, completion, {})
         request.start()
     }
 }

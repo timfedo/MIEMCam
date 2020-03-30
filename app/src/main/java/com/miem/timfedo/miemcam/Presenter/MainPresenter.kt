@@ -7,11 +7,13 @@ import com.miem.timfedo.miemcam.Model.Session
 import com.miem.timfedo.miemcam.View.CamerasListFragment
 import com.miem.timfedo.miemcam.View.ControlPanelFragment
 import com.miem.timfedo.miemcam.View.RecordFragment
+import com.miem.timfedo.miemcam.View.VmixControlFragment
 import okhttp3.OkHttpClient
 
 enum class FragentType {
     CONTROL,
-    RECORD
+    RECORD,
+    VMIX
 }
 
 interface MainController {
@@ -21,6 +23,7 @@ interface MainController {
     fun openCameraPicker()
     fun closeCameraPicker()
     fun setActionBarLabel(text: String)
+    fun setArrowVisibility(isVisible: Boolean)
 }
 
 class MainPresenter(private var viewController: MainController, private val session: Session) {
@@ -29,24 +32,37 @@ class MainPresenter(private var viewController: MainController, private val sess
     private val controlPanelFragment: ControlPanelFragment
     private val camerasListFragment: CamerasListFragment
     private val recordFragment: RecordFragment
+    private val vmixFragment: VmixControlFragment
     private val cameraServices: CameraServices
     private var isCameraPickerOpened = false
+    private var currentFragment = FragentType.CONTROL
 
     init {
         client.dispatcher.maxRequests = 1
         controlPanelFragment = ControlPanelFragment(client, session)
         camerasListFragment = CamerasListFragment(client, session, this::onCameraPicked)
         recordFragment = RecordFragment(client, session)
+        vmixFragment = VmixControlFragment(client, session)
         cameraServices = CameraServices(client, session)
     }
 
     fun onBottomTabButtonPressed(type: FragentType) {
+        currentFragment = type
         when (type) {
             FragentType.CONTROL -> {
+                viewController.setActionBarLabel("MIEMCam")
+                viewController.setArrowVisibility(true)
                 viewController.setFragment(controlPanelFragment)
             }
             FragentType.RECORD -> {
+                viewController.setActionBarLabel("MIEMCam")
+                viewController.setArrowVisibility(false)
                 viewController.setFragment(recordFragment)
+            }
+            FragentType.VMIX -> {
+                viewController.setActionBarLabel("MIEMCam")
+                viewController.setArrowVisibility(false)
+                viewController.setFragment(vmixFragment)
             }
         }
     }
@@ -61,6 +77,7 @@ class MainPresenter(private var viewController: MainController, private val sess
     }
 
     fun changeCamerasListVisibility() {
+        if (currentFragment != FragentType.CONTROL) { return }
         if (!isCameraPickerOpened) {
             viewController.openCameraPicker()
         } else {

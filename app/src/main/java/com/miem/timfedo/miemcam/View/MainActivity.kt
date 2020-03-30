@@ -21,6 +21,7 @@ import android.net.Uri
 import kotlin.random.Random
 import android.animation.Animator
 import android.app.Activity
+import android.view.View
 import com.miem.timfedo.miemcam.Model.Authorizer
 import java.net.Authenticator
 
@@ -39,6 +40,10 @@ class MainActivity : AppCompatActivity(), MainController {
             }
             R.id.navigation_record -> {
                 mainPresenter.onBottomTabButtonPressed(FragentType.RECORD)
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.navigation_vmix -> {
+                mainPresenter.onBottomTabButtonPressed(FragentType.VMIX)
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -109,7 +114,7 @@ class MainActivity : AppCompatActivity(), MainController {
             R.id.updateLog -> {
                 val builder = AlertDialog.Builder(this@MainActivity)
                 builder.setTitle("Информация о последнем обновлении")
-                    .setMessage("1) Камеры теперь подхватываются из gsuit\n2) Улучшения пользовательского интерфейса")
+                    .setMessage("1) Добавлено управление vmix\n2) Исправлен экран записи")
                     .setCancelable(false)
                     .setNegativeButton(if (Random.nextBoolean()) "Узнал" else "Согласен") { dialog, _ -> dialog.cancel() }
                 val alert = builder.create()
@@ -165,6 +170,14 @@ class MainActivity : AppCompatActivity(), MainController {
     override fun setActionBarLabel(text: String) {
         runOnUiThread {
             toolbarTitle.text = text
+        }
+    }
+
+    override fun setArrowVisibility(isVisible: Boolean) {
+        if (isVisible) {
+            arrowIcon.visibility = View.VISIBLE
+        } else {
+            arrowIcon.visibility = View.INVISIBLE
         }
     }
 

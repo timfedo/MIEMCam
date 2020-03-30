@@ -2,6 +2,7 @@
     <string name="app_name">MIEMCam</string>
     <string name="title_control_panel">Управление</string>
     <string name="title_record">Запись</string>
+    <string name="title_vmix">Vmix</string>
     <string name="start_record">Старт</string>
     <string name="stop_record">Стоп</string>
     <string name="source_camera">Камера</string>
@@ -26,7 +27,20 @@
     <string name="login_hint">e-mail</string>
     <string name="password_hint">Пароль</string>
     <string name="token_key">token</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="vmix_overlay_1">1</string>
+    <string name="vmix_overlay_2">2</string>
+    <string name="vmix_overlay_3">3</string>
+    <string name="vmix_overlay_4">4</string>
+    <string name="vmix_cut">Cut</string>
+    <string name="vmix_fade">Fade</string>
+    <string name="vmix_rec">Rec</string>
+    <string name="vmix_stream">Strm</string>
+    <string name="vmix_stop">Stop</string>
+    <string name="vmix_program">Prgr</string>
+    <string name="vmix_preview">Prvw</string>
+    <string name="begin">Начало:</string>
+    <string name="end">Конец:</string>
+    <string name="date">Дата:</string>
+    <string name="defaultTime">00:00</string>
+    <string name="create">Создать</string>
 </resources>

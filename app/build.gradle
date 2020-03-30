@@ -10,7 +10,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.miem.timfedo.miemcam"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -35,7 +35,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.2.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'de.mrmaffen:libvlc-android:2.1.12@aar'
+    //implementation 'de.mrmaffen:libvlc-android:2.1.12@aar'
+    implementation group: 'com.yyl.vlc', name: 'vlc-android-sdk', version: '3.1.7'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0-alpha4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha4'

@@ -9,18 +9,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.miem.timfedo.miemcam.Model.Session
 import com.miem.timfedo.miemcam.Presenter.RecordController
 import com.miem.timfedo.miemcam.Presenter.RecordPresenter
-import com.miem.timfedo.miemcam.Presenter.RecordState
-import com.miem.timfedo.miemcam.Presenter.SoundSource
 import com.miem.timfedo.miemcam.R
+import kotlinx.android.synthetic.main.fragment_cameras_list.*
 import kotlinx.android.synthetic.main.fragment_record.*
+import kotlinx.android.synthetic.main.fragment_record.loadingProgressList
 import okhttp3.OkHttpClient
 
 class RecordFragment(client: OkHttpClient, session: Session) : Fragment(), RecordController {
 
     private val recordPresenter = RecordPresenter(this, client, session)
+    private lateinit var viewManager: RecyclerView.LayoutManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,61 +35,26 @@ class RecordFragment(client: OkHttpClient, session: Session) : Fragment(), Recor
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recordPresenter.viewCreated()
-        startRecordButton.setOnClickListener {
-            recordPresenter.recordBtnClicked(RecordState.RECORDING)
-        }
-        stopRecordButton.setOnClickListener {
-            recordPresenter.recordBtnClicked(RecordState.NOTRECORDING)
-        }
-        sourceCameraButton.setOnClickListener {
-            recordPresenter.soundSourceBtnClicked(SoundSource.CAMERA)
-        }
-        sourceCoderButton.setOnClickListener {
-            recordPresenter.soundSourceBtnClicked(SoundSource.CODER)
+
+    }
+
+    override fun setUpRoomsListView(roomsAdapter: RoomsAdapter) {
+        viewManager = LinearLayoutManager(this.context)
+        roomsListView.layoutManager = viewManager
+        roomsListView.adapter = roomsAdapter
+    }
+
+    override fun updateRoomsListView() {
+        activity?.runOnUiThread {
+            roomsListView.adapter?.notifyDataSetChanged()
         }
     }
 
-    override fun setTextToRecordBtn(text: String) {
-        startRecordButton.text = text
+    override fun stopLoadAnimation() {
+        loadingProgressList.visibility = View.INVISIBLE
     }
 
-    override fun changeIsEnabledCameraBtn(isEnabled: Boolean) {
-        sourceCameraButton.isEnabled = !isEnabled
-        if (isEnabled) {
-            sourceCameraButton.setTextColor(Color.BLACK)
-            sourceCameraButton.strokeColor = ColorStateList.valueOf(Color.BLACK)
-        } else {
-            sourceCameraButton.setTextColor(Color.GRAY)
-            sourceCameraButton.strokeColor = ColorStateList.valueOf(Color.GRAY)
-        }
-    }
-
-    override fun changeIsEnabledCoderBtn(isEnabled: Boolean) {
-        sourceCoderButton.isEnabled = !isEnabled
-        if (isEnabled) {
-            sourceCoderButton.setTextColor(Color.BLACK)
-            sourceCoderButton.strokeColor = ColorStateList.valueOf(Color.BLACK)
-        } else {
-            sourceCoderButton.setTextColor(Color.GRAY)
-            sourceCoderButton.strokeColor = ColorStateList.valueOf(Color.GRAY)
-        }
-    }
-
-    override fun changeIsEnabledStartBtn(isEnabled: Boolean) {
-        startRecordButton.isEnabled = isEnabled
-        if (isEnabled) {
-            startRecordButton.strokeColor = ColorStateList.valueOf(Color.BLACK)
-        } else {
-            startRecordButton.strokeColor = ColorStateList.valueOf(Color.GRAY)
-        }
-    }
-
-    override fun changeIsEnabledStopBtn(isEnabled: Boolean) {
-        stopRecordButton.isEnabled = isEnabled
-        if (isEnabled) {
-            stopRecordButton.strokeColor = ColorStateList.valueOf(Color.BLACK)
-        } else {
-            stopRecordButton.strokeColor = ColorStateList.valueOf(Color.GRAY)
-        }
+    override fun startLoadAnimation() {
+        loadingProgressList.visibility = View.VISIBLE
     }
 }

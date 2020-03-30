@@ -7,75 +7,16 @@
         android:background="@color/background"
         tools:context=".View.RecordFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/roomsListView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            tools:listitem="@layout/room"/>
 
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/stopRecordButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="@string/stop_record"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/startRecordButton"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/colorAccent" />
-
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/startRecordButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/start_record"
-                app:layout_constraintEnd_toStartOf="@+id/stopRecordButton"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:strokeColor="@color/colorAccent" />
-
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/sourceCameraButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/source_camera"
-                app:layout_constraintEnd_toStartOf="@+id/sourceCoderButton"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/textView"
-                app:layout_constraintTop_toBottomOf="@+id/startRecordButton"
-                app:strokeColor="@color/colorAccent" />
-
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/sourceCoderButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="@string/source_coder"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/sourceCameraButton"
-                app:layout_constraintTop_toTopOf="@+id/sourceCameraButton"
-                app:strokeColor="@color/colorAccent" />
-
-        <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/source"
-                android:textColor="@color/colorAccent"
-                app:layout_constraintBottom_toBottomOf="@+id/sourceCameraButton"
-                app:layout_constraintEnd_toStartOf="@+id/sourceCameraButton"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/sourceCameraButton" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <ProgressBar
+            android:id="@+id/loadingProgressList"
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/colorPrimary"/>
 </FrameLayout>
