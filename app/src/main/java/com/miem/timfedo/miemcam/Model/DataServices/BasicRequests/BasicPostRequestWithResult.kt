@@ -14,6 +14,7 @@ import org.json.JSONObject
 import java.io.IOException
 
 class BasicPostRequestWithResult(private val client: OkHttpClient,
+                                 private val showAuth: Boolean,
                                  private val url: String,
                                  private val header: String,
                                  private val body: String?,
@@ -36,7 +37,9 @@ class BasicPostRequestWithResult(private val client: OkHttpClient,
                     in 200..299 ->
                         completion(responseBody.string())
                     401 ->
-                        unauthorized()
+                        if (showAuth) {
+                            unauthorized()
+                        }
                     else -> {
                         Log.e("post", response.code.toString())
                         errorHandler()

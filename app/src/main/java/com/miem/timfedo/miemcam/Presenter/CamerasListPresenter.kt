@@ -10,6 +10,7 @@ import okhttp3.OkHttpClient
 
 interface CamerasListController {
     fun setToolbarLabel(text: String)
+    fun setLoadingVisibility(isVisible: Boolean)
     fun setUpCamerasListView(camerasAdapter: CamerasAdapter)
     fun updateCamerasListView()
     fun stopLoadAnimation()
@@ -28,13 +29,19 @@ class CamerasListPresenter(private val camerasListController: CamerasListControl
         camerasListController.setUpCamerasListView(camerasAdapter)
     }
 
+    fun clearList() {
+        camerasList.replaceAll(ArrayList())
+    }
+
     private fun onCameraPicked(camera: Camera) {
-        cameraServices.choseCam(camera.uid) { result ->
+        camerasListController.setLoadingVisibility(true)
+        cameraServices.choseCam(camera.uid, { result ->
             session.pickedRoom = camera.room
             session.pickedCamera = camera.uid
             session.port = result
             this.camerasListController.setToolbarLabel(camera.name)
-        }
+        }, { camerasListController.setLoadingVisibility(false) })
+        cameraServices.releaseCamera()
     }
 
     private fun onCamerasReceived(cameras: ArrayList<Camera>) {

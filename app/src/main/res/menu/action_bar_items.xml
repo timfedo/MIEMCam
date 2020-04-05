@@ -26,4 +26,9 @@
             android:title="DEBUG инфа об обнове"
             app:showAsAction="never">
     </item>
+    <item
+            android:id="@+id/token"
+            android:title="DEBUG ввести токен"
+            app:showAsAction="never">
+    </item>
 </menu>

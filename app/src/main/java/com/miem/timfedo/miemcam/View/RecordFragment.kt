@@ -35,7 +35,6 @@ class RecordFragment(client: OkHttpClient, session: Session) : Fragment(), Recor
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recordPresenter.viewCreated()
-
     }
 
     override fun setUpRoomsListView(roomsAdapter: RoomsAdapter) {
@@ -46,15 +45,11 @@ class RecordFragment(client: OkHttpClient, session: Session) : Fragment(), Recor
 
     override fun updateRoomsListView() {
         activity?.runOnUiThread {
-            roomsListView.adapter?.notifyDataSetChanged()
+            roomsListView?.adapter?.notifyDataSetChanged()
         }
     }
 
     override fun stopLoadAnimation() {
-        loadingProgressList.visibility = View.INVISIBLE
-    }
-
-    override fun startLoadAnimation() {
-        loadingProgressList.visibility = View.VISIBLE
+        loadingProgressList?.visibility = View.INVISIBLE
     }
 }

@@ -6,6 +6,7 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/background"
         tools:context=".View.MainActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -39,6 +40,15 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_arrow_icon"
                     android:layout_gravity="center_vertical"/>
+
+            <ProgressBar
+                    android:id="@+id/loadingProgressCamera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:indeterminateTint="@color/colorPrimary"/>
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 

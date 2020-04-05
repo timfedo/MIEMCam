@@ -1,28 +1,38 @@
 package com.miem.timfedo.miemcam.Presenter
 
 import android.net.Uri
+import android.os.CountDownTimer
+import android.util.Log
 import com.miem.timfedo.miemcam.Model.DataServices.*
 import com.miem.timfedo.miemcam.Model.Session
 import okhttp3.OkHttpClient
 import java.lang.Math.abs
+import java.util.*
 
 interface ControlPanelController {
     fun changeIsEnabledFocusAutoBtn(isEnabled: Boolean)
     fun changeIsEnabledFocusManualBtn(isEnabled: Boolean)
-    fun setUpVout()
     fun startStream(uri: Uri)
+    fun setScaleMode(mode: ScaleMode)
+    fun releaseCamera()
+}
+
+enum class ScaleMode {
+    FIT,
+    FILL
 }
 
 class ControlPanelPresenter(private val controlPanelController: ControlPanelController,
                             client: OkHttpClient,
-                            session: Session) {
+                            private val session: Session) {
 
     private var presetServices = PresetServices(client, session)
     private var actionServices = ActionServices(client, session)
+    private var cameraServices = CameraServices(client, session)
     private var prevX = 2f
     private var prevY = 2f
     private var currentFocusMode = FocusMode.AUTO
-    private var streamUri = Uri.EMPTY
+    private var scaleMode = ScaleMode.FILL
 
     fun stopped() {
         actionServices.stop {}
@@ -79,7 +89,28 @@ class ControlPanelPresenter(private val controlPanelController: ControlPanelCont
         }
     }
 
-    fun updateFocusModeBtns() {
+    fun startStream() {
+        if (session.port.isEmpty() || session.pickedCamera.isEmpty()) { return }
+        controlPanelController.startStream(Uri.parse("rtsp://92.53.78.98:${session.port}/${session.pickedCamera}"))
+    }
+
+    fun viewDestroyed() {
+        session.pickedCamera = ""
+        session.port = ""
+        session.pickedRoom = ""
+        controlPanelController.releaseCamera()
+        cameraServices.releaseCamera()
+    }
+
+    fun touchPadDoubleClicked() {
+        scaleMode = when (scaleMode) {
+            ScaleMode.FIT -> ScaleMode.FILL
+            ScaleMode.FILL -> ScaleMode.FIT
+        }
+        controlPanelController.setScaleMode(scaleMode)
+    }
+
+    private fun updateFocusModeBtns() {
         when (currentFocusMode) {
             FocusMode.AUTO -> {
                 controlPanelController.changeIsEnabledFocusAutoBtn(true)
@@ -90,20 +121,5 @@ class ControlPanelPresenter(private val controlPanelController: ControlPanelCont
                 controlPanelController.changeIsEnabledFocusManualBtn(true)
             }
         }
-    }
-
-    fun setUpStream() {
-        controlPanelController.setUpVout()
-    }
-
-//    fun surfacesCreated() {
-//        // TODO: remove! Only mock
-//        setStreamUri()
-//        Uri.parse("rtsp://92.53.78.98:${session.port}/${session.pickedCamera}}")
-//    }
-
-    fun setStreamUri(uri: Uri) {
-        this.streamUri = uri
-        controlPanelController.startStream(uri)
     }
 }

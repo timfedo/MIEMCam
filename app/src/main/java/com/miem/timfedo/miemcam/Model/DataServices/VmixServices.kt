@@ -2,6 +2,7 @@ package com.miem.timfedo.miemcam.Model.DataServices
 
 import com.miem.timfedo.miemcam.Model.DataServices.BasicRequests.BasicPostRequest
 import com.miem.timfedo.miemcam.Model.Session
+import com.miem.timfedo.miemcam.Model.Toaster
 import okhttp3.OkHttpClient
 import org.json.JSONObject
 
@@ -15,7 +16,7 @@ class VmixServices(private val client: OkHttpClient, private val session: Sessio
         }
         val request = BasicPostRequest(client, Session.basicAdress + "/vmix", session.token, json.toString(), {
             completion()
-        }, {})
+        }, { Toaster.shared.showToast("Не удвлось выполнить команду") })
         request.start()
     }
 }

@@ -19,6 +19,7 @@ import okhttp3.OkHttpClient
 
 class CamerasListFragment(client: OkHttpClient,
                           session: Session,
+                          private val setLoadingAnimationVisibility: (Boolean) -> Unit,
                           private val setToolbarName: (String) -> Unit) : Fragment(), CamerasListController {
 
     private val camerasListPresenter = CamerasListPresenter(this, client, session)
@@ -40,6 +41,10 @@ class CamerasListFragment(client: OkHttpClient,
         setToolbarName(text)
     }
 
+    override fun setLoadingVisibility(isVisible: Boolean) {
+        setLoadingAnimationVisibility(isVisible)
+    }
+
     override fun setUpCamerasListView(camerasAdapter: CamerasAdapter) {
         viewManager = LinearLayoutManager(this.context)
         camerasListView.layoutManager = viewManager
@@ -54,5 +59,9 @@ class CamerasListFragment(client: OkHttpClient,
 
     override fun stopLoadAnimation() {
         loadingProgressList.visibility = View.INVISIBLE
+    }
+
+    fun clearList() {
+        camerasListPresenter.clearList()
     }
 }

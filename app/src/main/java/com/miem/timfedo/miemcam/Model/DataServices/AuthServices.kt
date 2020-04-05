@@ -7,8 +7,10 @@ import com.miem.timfedo.miemcam.Model.DataServices.BasicRequests.BasicPostReques
 import com.miem.timfedo.miemcam.Model.Entity.CamerasList
 import com.miem.timfedo.miemcam.Model.Entity.Objects.Camera
 import com.miem.timfedo.miemcam.Model.Session
+import com.miem.timfedo.miemcam.Model.Toaster
 import kotlinx.serialization.json.JSON
 import okhttp3.OkHttpClient
+import org.json.JSONException
 import org.json.JSONObject
 
 class AuthServices(private val client: OkHttpClient) {
@@ -17,9 +19,13 @@ class AuthServices(private val client: OkHttpClient) {
         val json = JSONObject()
         json.put("email", email)
         json.put("password", password)
-        val request = BasicPostRequestWithResult(client, Session.basicAdressNvr + "/login", "", json.toString(), { result ->
-            completion(JSONObject(result).getString("token"))
-        }, {})
+        val request = BasicPostRequestWithResult(client, false,Session.basicAdress + "/login", "", json.toString(), { result ->
+            var value = ""
+            try {
+                value = JSONObject(result).getString("token")
+            } catch (e: JSONException) {}
+            completion(value)
+        }, { Toaster.shared.showToast("Неподходящие логин и пароль") })
         request.start()
     }
 }

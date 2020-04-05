@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat
 
 
 class RoomsAdapter(var roomsList: ArrayList<String>,
+                   var savedEmail: String,
                    val onRequestClicked: ((room: String, email: String, name: String, date: String, start: String, stop: String) -> Unit)) : RecyclerView.Adapter<RoomsAdapter.RoomHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
@@ -90,6 +91,7 @@ class RoomsAdapter(var roomsList: ArrayList<String>,
                 cutName.inputType = InputType.TYPE_CLASS_TEXT
                 val email = EditText(context)
                 email.hint = "email"
+                email.setText(savedEmail)
                 email.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
                 val layout = LinearLayout(context)
                 layout.orientation = LinearLayout.VERTICAL
@@ -98,8 +100,8 @@ class RoomsAdapter(var roomsList: ArrayList<String>,
                     LinearLayout.LayoutParams.MATCH_PARENT
                 )
                 layoutParams.topMargin = 16
-                layoutParams.marginStart = 30
-                layoutParams.marginEnd = 30
+                layoutParams.marginStart = 40
+                layoutParams.marginEnd = 40
                 layout.addView(cutName, layoutParams)
                 layout.addView(email, layoutParams)
                 builder.setView(layout)

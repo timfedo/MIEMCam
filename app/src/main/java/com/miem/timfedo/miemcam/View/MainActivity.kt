@@ -21,8 +21,13 @@ import android.net.Uri
 import kotlin.random.Random
 import android.animation.Animator
 import android.app.Activity
+import android.transition.Slide
+import android.view.Gravity
 import android.view.View
+import androidx.core.view.isVisible
+import androidx.fragment.app.FragmentTransaction
 import com.miem.timfedo.miemcam.Model.Authorizer
+import com.miem.timfedo.miemcam.Model.Toaster
 import java.net.Authenticator
 
 const val TOKEN_REQUEST = 1
@@ -53,11 +58,14 @@ class MainActivity : AppCompatActivity(), MainController {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         session = Session(this)
-        mainPresenter = MainPresenter(this, session)
+        Toaster.shared.activity = this
+        mainPresenter = MainPresenter(this, session, this)
         setContentView(R.layout.activity_main)
+        toolbar.visibility = View.INVISIBLE
+        navigation.visibility = View.INVISIBLE
 
         Authorizer.shared.showAuth = {
-            //session.token = ""
+            mainPresenter.clean()
             val intent = Intent(this, AuthorizationView::class.java)
             startActivityForResult(intent, TOKEN_REQUEST)
         }
@@ -71,7 +79,9 @@ class MainActivity : AppCompatActivity(), MainController {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == TOKEN_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                //session.token = data?.getStringExtra("token") ?: ""
+                session.token = data?.getStringExtra("token") ?: ""
+                session.email = data?.getStringExtra("email") ?: ""
+                mainPresenter.startUp()
             }
         }
     }
@@ -85,6 +95,12 @@ class MainActivity : AppCompatActivity(), MainController {
         return when(item?.itemId) {
             R.id.logout -> {
                 Authorizer.shared.showAuth()
+
+                return true
+            }
+            R.id.about -> {
+                val aboutIntent = Intent(this, AboutActivity::class.java)
+                startActivity(aboutIntent)
                 return true
             }
             R.id.setBaseUrl -> {
@@ -114,11 +130,31 @@ class MainActivity : AppCompatActivity(), MainController {
             R.id.updateLog -> {
                 val builder = AlertDialog.Builder(this@MainActivity)
                 builder.setTitle("Информация о последнем обновлении")
-                    .setMessage("1) Добавлено управление vmix\n2) Исправлен экран записи")
+                    .setMessage("1) Добавлен видеопоток\n2) Добавлена аутентификация\n3) Добавлен экран о приложении\n4) Мелкие исправления")
                     .setCancelable(false)
                     .setNegativeButton(if (Random.nextBoolean()) "Узнал" else "Согласен") { dialog, _ -> dialog.cancel() }
                 val alert = builder.create()
                 alert.show()
+                return true
+            }
+            R.id.token -> {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Title")
+
+                val input = EditText(this)
+                input.inputType =
+                    InputType.TYPE_CLASS_TEXT
+                input.setText(session.token)
+                builder.setView(input)
+
+                builder.setPositiveButton(
+                    "OK"
+                ) { dialog, which -> session.token = input.text.toString() }
+                builder.setNegativeButton(
+                    "Cancel"
+                ) { dialog, which -> dialog.cancel() }
+
+                builder.show()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -126,6 +162,8 @@ class MainActivity : AppCompatActivity(), MainController {
     }
 
     override fun setUpViews() {
+        toolbar.visibility = View.VISIBLE
+        navigation.visibility = View.VISIBLE
         setUpActionBar()
     }
 
@@ -145,6 +183,7 @@ class MainActivity : AppCompatActivity(), MainController {
                     override fun onAnimationStart(animation: Animator) {
                         super.onAnimationEnd(animation)
                         toolbar.elevation = 4f
+                        camerasListPlaceholder.visibility = View.VISIBLE
                     }
                 })
             arrowIcon.animate()
@@ -160,6 +199,7 @@ class MainActivity : AppCompatActivity(), MainController {
                     override fun onAnimationEnd(animation: Animator) {
                         super.onAnimationEnd(animation)
                         toolbar.elevation = 0f
+                        camerasListPlaceholder.visibility = View.INVISIBLE
                     }
                 })
             arrowIcon.animate()
@@ -178,6 +218,14 @@ class MainActivity : AppCompatActivity(), MainController {
             arrowIcon.visibility = View.VISIBLE
         } else {
             arrowIcon.visibility = View.INVISIBLE
+        }
+    }
+
+    override fun setLoadingVisibility(isVisible: Boolean) {
+        if (isVisible) {
+            loadingProgressCamera.visibility = View.VISIBLE
+        } else {
+            loadingProgressCamera.visibility = View.INVISIBLE
         }
     }
 

@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -65,7 +66,12 @@ class VmixControlFragment(client: OkHttpClient,
             val displayMetrics = DisplayMetrics()
             (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
             val width = displayMetrics.widthPixels
-            layoutParams.width = (width - 8 * displayMetrics.densityDpi * 4) / 4
+            val gap = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                8f,
+                displayMetrics
+            ).toInt()
+            layoutParams.width = (width - gap) / 4
 
             overlay1.setOnClickListener {
                 vmixControlPresenter.overlayBtnClicked(1, name)

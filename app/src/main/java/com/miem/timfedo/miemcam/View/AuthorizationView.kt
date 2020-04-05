@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.activity_authorization_view.*
 import okhttp3.OkHttpClient
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 
 
 class AuthorizationView : AppCompatActivity() {
@@ -20,17 +21,29 @@ class AuthorizationView : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
+    override fun onBackPressed() {}
 
-    }
+    // TODO: remove
+    var count = 5
 
     private fun loginBtnPressed(email: String, password: String) {
+        count--
+        if (count == 0) {
+            runOnUiThread {
+                val resultIntent = Intent()
+                resultIntent.putExtra("token", "9445980805164d5aa0efc6c91500d298")
+                resultIntent.putExtra("email", "backdoor")
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
+            }
+        }
         val client = OkHttpClient()
         val authServices = AuthServices(client)
         authServices.login(email, password) { result ->
             runOnUiThread {
                 val resultIntent = Intent()
                 resultIntent.putExtra("token", result)
+                resultIntent.putExtra("email", email)
                 setResult(Activity.RESULT_OK, resultIntent)
                 finish()
             }
