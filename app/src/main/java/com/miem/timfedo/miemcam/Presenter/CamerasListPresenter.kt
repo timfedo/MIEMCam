@@ -41,7 +41,6 @@ class CamerasListPresenter(private val camerasListController: CamerasListControl
             session.port = result
             this.camerasListController.setToolbarLabel(camera.name)
         }, { camerasListController.setLoadingVisibility(false) })
-        cameraServices.releaseCamera()
     }
 
     private fun onCamerasReceived(cameras: ArrayList<Camera>) {
